@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# See comments below the initial settings for use on RPi 3
+
 from neopixel import *
 from gpiozero import Button
 from time import sleep
@@ -12,6 +14,14 @@ LED_FREQ_HZ    = 800000  # LED signal frequency in hertz
 LED_DMA        = 5
 LED_BRIGHTNESS = 255     # Brightness of LEDs
 LED_INVERT     = False
+
+# RPi 3 provides PWM (which is best option for Neopixel control) only on GPIO 18
+# The changed settings below move the LED control to GPIO 18 and the button to GPIO 14
+# Wiring for the LED control and button will have to be changed from that described 
+# in the MagPi 52 article if these new settings are used.
+# Uncomment the following two lines to switch the settings
+button = Button (14)
+LED_PIN        = 18
 
 def lights_on (strip, color):
     for i in range(strip.numPixels()):
@@ -55,6 +65,6 @@ while True:
         lights_wave(strip, Color(255,0,0), Color(0,0,255))
     sleep(0.5)
     while button.is_pressed == False:
-        ligthts_rainbow(strip)
+        lights_rainbow(strip)
     sleep(0.5)
     
