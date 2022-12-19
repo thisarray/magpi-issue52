@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tracker</title>
+  <script src="../jsgame0.js"></script>
+  <style type="text/css" media="screen">
+body {
+  background-color: white;
+  color: black;
+}
+.hidden {
+  display: none;
+}
+#original {
+  margin-left: 1em;
+}
+  </style>
+</head>
+
+<body>
+<section id="imageLoader" class="hidden">
+  <img class="hidden" src="images/map.png" alt="map" data-name="map">
+  <img class="hidden" src="images/santa.png" alt="santa" data-name="santa">
+</section>
+
+<main>
+<h1>tracker</h1>
+
+<canvas id="screen">
+The game screen appears here if your browser supports the Canvas API.
+</canvas>
+<section id="controls">
+  <button type="button" id="reset">Reset</button>
+  <button type="button" id="pause">Pause</button>
+</section>
+
+<p>This code will only work on Christmas Eve and Christmas Day.</p>
+
+<h2>Attribution</h2>
+
+<p><a href="https://magpi.raspberrypi.com/issues/52">Santa Tracker Pi - find out where Santa is on his journey around the world by visualizing it on a map, pages 24 - 25</a>.</p>
+
+<p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported</a>.</p>
+
+<h2>Original Python code</h2>
+
+<pre id="original"><code>
+import urllib.request
+
+santa = Actor(&#x27;santa&#x27;)
+
+WIDTH = 800
+HEIGHT = 400
+
+def draw():
+    screen.blit(&#x27;map&#x27;,(0,0))
+    santa.draw()
+
+def santa_loc(c_day, c_hour, c_minute):
+    if c_day == 24:
+        location1 = (WIDTH/27)*(c_hour - 10)
+        location2 = ((WIDTH/27)/60)*(c_minute)
+    else:
+        location1 = (WIDTH/27)*(c_hour + 14)
+        location2 = ((WIDTH/27)/60)*(c_minute)
+    santa.pos = (WIDTH - (location1 + location2)), (HEIGHT/2)
+
+
+def update():
+    response = urllib.request.urlopen(&#x27;http://just-the-time.appspot.com/&#x27;)
+    web_time = (response.read()).decode(&#x27;utf-8&#x27;)
+    c_day = web_time[0:2]
+    c_month = web_time[3:5]
+    c_hour = int(web_time[11:13])
+    c_minute = int(web_time[14:16])
+
+    if c_month == 12 and c_day == 24:
+        if c_hour &gt;= 10:
+            santa_loc(c_day, c_hour, c_minute)
+        else:
+            santa.pos = (WIDTH), (HEIGHT/2)
+    elif c_month == 12 and c_day == 25:
+        if c_hour &lt;= 12:
+            santa_loc(c_day, c_hour, c_minute)
+        else:
+            santa.pos = (WIDTH-WIDTH), (HEIGHT/2)
+    else:
+        santa.pos = (WIDTH), (HEIGHT/2)
+</code></pre>
+</main>
+
+<script>
+WIDTH = 800;
+HEIGHT = 400;
+
+var santa;
+
+function reset() {
+  santa = new Actor('santa');
+}
+
+function draw() {
+  screen.blit('map', [0, 0]);
+  santa.draw();
+}
+
+function santa_loc(c_day, c_hour, c_minute) {
+  let location1, location2;
+  if (c_day === 24) {
+    location1 = (WIDTH / 27) * (c_hour - 10);
+    location2 = ((WIDTH / 27) / 60) * c_minute;
+  }
+  else {
+    location1 = (WIDTH / 27) * (c_hour + 14);
+    location2 = ((WIDTH / 27) / 60) * c_minute;
+  }
+  santa.pos = [WIDTH - (location1 + location2), HEIGHT / 2];
+}
+
+function update() {
+  let now = new Date(),
+      c_day = now.getUTCDate(),
+      c_month = now.getUTCMonth() + 1,
+      c_hour = now.getUTCHours(),
+      c_minute = now.getUTCMinutes();
+
+  if ((c_month === 12) && (c_day === 24)) {
+    if (c_hour >= 10) {
+      santa_loc(c_day, c_hour, c_minute);
+    }
+    else {
+      santa.pos = [WIDTH, HEIGHT / 2];
+    }
+  }
+  else if ((c_month === 12) && (c_day === 25)) {
+    if (c_hour <= 12) {
+      santa_loc(c_day, c_hour, c_minute);
+    }
+    else {
+      santa.pos = [0, HEIGHT / 2];
+    }
+  }
+  else {
+    santa.pos = [WIDTH, HEIGHT / 2];
+  }
+}
+
+window.addEventListener('load', (event) => {
+  screen.init();
+});
+</script>
+</body>
+
+</html>
