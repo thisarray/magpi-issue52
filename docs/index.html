@@ -151,11 +151,12 @@ function update() {
 function countdown() {
   let today = new Date((new Date()).toISOString().substring(0, 10)),
       xmas = new Date(today.getFullYear() + '-12-25'),
-      dayCount;
-  if ((today.getMonth() === 12) && (today.getDate() > 25)) {
+      dayCount = Math.floor((xmas.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
+  if (dayCount < 0) {
+    // Handle the week between Christmas and end of the year
     xmas = new Date((today.getFullYear() + 1) + '-12-25');
+    dayCount = Math.floor((xmas.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
   }
-  dayCount = Math.floor((xmas.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
   console.log(dayCount);
 }
 
