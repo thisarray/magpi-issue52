@@ -153,13 +153,26 @@ function update() {
 function countdown() {
   let today = new Date((new Date()).toISOString().substring(0, 10)),
       xmas = new Date(today.getFullYear() + '-12-25'),
-      dayCount = Math.floor((xmas.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
+      dayCount = Math.floor((xmas.getTime() - today.getTime()) / (24 * 60 * 60 * 1000)),
+      output = document.querySelector('#countdown'),
+      paragraph = document.createElement('p'),
+      message;
   if (dayCount < 0) {
     // Handle the week between Christmas and end of the year
     xmas = new Date((today.getFullYear() + 1) + '-12-25');
     dayCount = Math.floor((xmas.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
   }
   console.log(dayCount);
+  if (dayCount > 0) {
+    if (dayCount < 2) {
+      message = `Check back in ${ dayCount } day.`;
+    }
+    else {
+      message = `Check back in ${ dayCount } days.`;
+    }
+    paragraph.appendChild(document.createTextNode(message));
+    output.appendChild(paragraph);
+  }
 }
 
 window.addEventListener('load', (event) => {
